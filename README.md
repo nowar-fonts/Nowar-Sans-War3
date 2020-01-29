@@ -33,7 +33,7 @@ Alternatively, you can download `enable-fonts.reg` from [regs/](regs/) and impor
 
 [Latest release](https://github.com/nowar-fonts/Nowar-Sans-War3/releases)
 
-Nowar Sans is shipped in 4 weights and 8 regional variants.
+Nowar Sans is shipped in 4 weights and 7 regional variants, with several features.
 
 ### Weights
 
@@ -46,29 +46,38 @@ Nowar Sans is shipped in 4 weights and 8 regional variants.
 
 CN, TW, HK, JP and KR are “standard variants”, which have full character set support with regional Chinese character orthographies.
 
-| | European | <ruby>简体中文<rt>Jiǎntǐ-zhōngwén</rt></ruby> | <ruby>繁體中文<rt>Fántǐ-zhōngwén</rt></ruby> | <ruby>日本語<rt>Nihongo</rt></ruby> (chat only) | <ruby>한국어<rt>Hangugeo</rt></ruby> |
-| -- | ------------------- | -------------- | --------- | ---------- | -------- |
-| CN | Mainland China (UI) | Mainland China | Taiwan    | Japan (UI) | S. Korea |
-| TW | Taiwan (UI)         | Mainland China | Taiwan    | Japan (UI) | S. Korea |
-| HK | Hong Kong (UI)      | Mainland China | Hong Kong | Japan (UI) | S. Korea |
-| JP | Japan (UI)          | Mainland China | Taiwan    | Japan (UI) | S. Korea |
-| KR | S. Korea (UI)       | Mainland China | Taiwan    | Japan (UI) | S. Korea |
+|    | European            | 简体中文       | 繁體中文  | 日本語 (chat only) | 한국어        |
+| -- | ------------------- | -------------- | --------- | ------------------ | ------------- |
+| CN | Mainland China (UI) | Mainland China | Taiwan    | Japan (UI)         | S. Korea (UI) |
+| TW | Taiwan (UI)         | Mainland China | Taiwan    | Japan (UI)         | S. Korea (UI) |
+| HK | Hong Kong (UI)      | Mainland China | Hong Kong | Japan (UI)         | S. Korea (UI) |
+| JP | Japan (UI)          | Mainland China | Taiwan    | Japan (UI)         | S. Korea (UI) |
+| KR | S. Korea (UI)       | Mainland China | Taiwan    | Japan (UI)         | S. Korea (UI) |
 
-CL and OSF are “classical variants”, which have full character set support with classical Chinese character orthography (aka Kāngxī Dictionary forms).
+CL, the “classical variant”, have full character set support with classical Chinese character orthography (aka Kāngxī Dictionary forms).
 
-| | European | <ruby>中文<rt>Zhōngwén</rt></ruby> | <ruby>日本語<rt>Nihongo</rt></ruby> (chat only) | <ruby>한국어<rt>Hangugeo</rt></ruby> |
-| --- | ------------------------------- | --------- | -------------- | --------- |
-| CL  | Classical (UI)                  | Classical | Classical (UI) | Classical |
-| OSF | Classical (UI, Oldstyle Figure) | Classical | Classical (UI) | Classical |
+|    | European       | 中文      | 日本語 (chat only) | 한국어         |
+| -- | -------------- | --------- | ------------------ | -------------- |
+| CL | Classical (UI) | Classical | Classical (UI)     | Classical (UI) |
 
 GB is a special offer that supports a superset of Chinese national standard GB 18030-2000. The GB releases are much smaller than standard releases by removing Hangul support.
 
-| | European | <ruby>中文<rt>Zhōngwén</rt></ruby> | <ruby>日本語<rt>Nihongo</rt></ruby> (chat only) | <ruby>한국어<rt>Hangugeo</rt></ruby> |
-| -- | ------------------- | -------------- | ------------------- | --- |
-| GB | Mainland China (UI) | Mainland China | Mainland China (UI) | N/A |
+|    | European            | 中文           | 日本語 (chat only)  | 한국어 |
+| -- | ------------------- | -------------- | ------------------- | ------ |
+| GB | Mainland China (UI) | Mainland China | Mainland China (UI) | N/A    |
 
 * European: English, Español (AL), Português, Deutsch, Español (EU), Français, Italiano, and Русский.
-* UI: Ambiguous punctations are treated as European; CJK puctations are half-width; Kana are proportional.
+* UI: Ambiguous punctations are treated as European; CJK puctations are half-width.
+
+### Features
+
+| Tag | Name        | Description                                                            |
+| --- | ----------- | ---------------------------------------------------------------------- |
+| OSF | Oldstyle    | Oldstyle (non-lining), propotional figure.                             |
+| SC  | Smallcaps   | Small capitals for Latin.                                              |
+| RP  | Roleplaying | `丶` (U+4E36) is mapped to the same glyph as `·` (U+00B7, MIDDLE DOT). |
+
+Pre-built feature variants: `CL,OSF`, `CL,SC`, `GB,OSF`, `GB,SC`.
 
 ## Known Issue
 
@@ -86,16 +95,82 @@ This issue also appears with _Warcraft III_’s vanilla fonts.
 
 ## How to Build
 
-Dependencies: basic Unix utils, [Python](https://www.python.org/), [otfcc](https://github.com/caryll/otfcc) and [7-Zip](https://www.7-zip.org/) (add to `PATH`).
+### Dependencies
 
-Note: choose 64-bit version if possible. 32-bit version may lead to out-of-memory issue.
++ basic Unix utils,
++ [Python](https://www.python.org/),
++ [otfcc](https://github.com/caryll/otfcc) and
++ [7-Zip](https://www.7-zip.org/) (add to `PATH`).
 
-Run `configure.py` to generate Makefile. (Optional)
+Note:
++ Choose 64-bit version if possible. 32-bit version may lead to out-of-memory issue.
++ Use POSIX build of GNU Make on Windows ([MSYS2’s](https://www.msys2.org) or [Nowar’s](https://github.com/nowar-fonts/Toolchain-Windows-Build)).
+
+### Build Feature Variant
+
+Prepare submodules:
+```bash
+git submodule update --init --recursive
+```
+
+Run `configure.py` to generate Makefile:
 ```bash
 python configure.py
 ```
 
-Put Source Han Sans OTF files (all families but HW) and Subset OTF files (CN only) to `shs/`, then just `make` it. 
+Put Source Han Sans OTF files (all families but HW) and Subset OTF files (if you need GB variant) to `source/shs/`
+
+Then make a specific variant:
+```bash
+make <region>,<features>-<weight> -j<threads>
+```
+Note: Features must be identically sorted as mentioned above. (`OSF`, `SC`, `RP`).
+
+e.g.
+```bash
+make CN,OSF,SC,RP-400 -j4
+```
+
+The output is `out/NowarSans-<region>,<features>-<weight>-<version>.7z`.
+
+### Create Regional Variant
+
+To build exactly what you need, modify `configure.py`:
+```python
+class Config:
+    # put your variant here
+    fontPackRegion = [ <your_region> ]
+
+# define the variant here. don’t remove pre-defined variants.
+regionalVariant = { ... }
+```
+
+For example, “I enjoy Japna’s orthography, and I’d like to apply it to every language!”
+```python
+class Config:
+    fontPackRegion = [ "JPeverywhere" ]
+
+regionalVariant = {
+    ...,
+    "JPeverywhere": {
+        "Latn": "JP",
+        "Hans": "JP",
+        "Hant": "JP",
+        "ja": "JP",
+        "ko": "JP",
+    }
+}
+```
+
+Then, run `python configure.py` to generate `Makefile`. The new regional variant (with optional feature) can be built by:
+```bash
+make <region>,<features>-<weight> -j<threads>
+```
+e.g.
+```bash
+make JPeverywhere-400 -j4
+make JPeverywhere,OSF-400 -j4
+```
 
 ## Credit
 

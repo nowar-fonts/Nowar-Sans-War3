@@ -3,11 +3,11 @@ import copy
 import json
 import codecs
 from types import SimpleNamespace as Namespace
-from fontlib.merge import MergeBelow
-from fontlib.pkana import ApplyPalt
-from fontlib.transform import Transform, ChangeAdvanceWidth
-from fontlib.gsub import GetGsubFlat
-from fontlib.gsub import ApplyGsubSingle
+from libotd.merge import MergeBelow, MergeAbove
+from libotd.pkana import ApplyPalt, NowarApplyPaltMultiplied
+from libotd.transform import Transform, ChangeAdvanceWidth
+from libotd.gsub import GetGsubFlat, ApplyGsubSingle
+from libotd.gc import Gc, NowarRemoveFeatures
 import configure
 
 langIdList = [ 0x0409, 0x0804, 0x0404, 0x0C04, 0x0411, 0x0412 ]
@@ -18,6 +18,7 @@ def NameFont(param, font):
 	friendly = configure.GenerateFriendlyFamily(param)
 	legacyf, legacysubf = configure.GenerateLegacySubfamily(param)
 
+	font['head']['fontRevision'] = configure.config.fontRevision
 	font['OS_2']['achVendID'] = configure.config.vendorId
 	font['OS_2']['usWeightClass'] = param.weight
 	font['OS_2']['usWidthClass'] = param.width
@@ -144,13 +145,40 @@ def NameFont(param, font):
 		cff['familyName'] = family[1033]
 		cff['weight'] = subfamily
 
+def GenerateAsianSymbolFont(font):
+	asianSymbol = [
+		0x00B7, # MIDDLE DOT
+		0x2014, # EM DASH
+		0x2015, # HORIZONTAL BAR
+		0x2018, # LEFT SINGLE QUOTATION MARK
+		0x2019, # RIGHT SINGLE QUOTATION MARK
+		0x201C, # LEFT DOUBLE QUOTATION MARK
+		0x201D, # RIGHT DOUBLE QUOTATION MARK
+		0x2026, # HORIZONTAL ELLIPSIS
+		0x2027, # HYPHENATION POINT
+		0x2E3A, # TWO-EM DASH
+		0x2E3B, # THREE-EM DASH
+	]
+	font = copy.deepcopy(font)
+	if 'cmap_uvs' in font:
+		del font['cmap_uvs']
+	rm = []
+	for k in font['cmap']:
+		if int(k) not in asianSymbol:
+			rm.append(k)
+	for k in rm:
+		del font['cmap'][k]
+	NowarRemoveFeatures(font)
+	Gc(font)
+	return font
+
 if __name__ == '__main__':
 	param = sys.argv[1]
 	param = Namespace(**json.loads(param))
 
 	dep = configure.ResolveDependency(param)
 
-	with open("noto/{}.otd".format(configure.GenerateFilename(dep['Latin'])), 'rb') as baseFile:
+	with open("build/noto/{}.otd".format(configure.GenerateFilename(dep['Latin'])), 'rb') as baseFile:
 		baseFont = json.loads(baseFile.read().decode('UTF-8', errors='replace'))
 	NameFont(param, baseFont)
 
@@ -165,27 +193,31 @@ if __name__ == '__main__':
 	baseFont['OS_2']['usWinDescent'] = 300
 
 	# oldstyle figure
-	if configure.GetRegion(param) == "OSF":
+	if "OSF" in param.feature:
 		ApplyGsubSingle('pnum', baseFont)
 		ApplyGsubSingle('onum', baseFont)
 
+	# small caps
+	if "SC" in param.feature:
+		ApplyGsubSingle('smcp', baseFont)
+
 	# replace numerals
 	if param.family in [ "WarcraftSans", "WarcraftUI" ]:
-		with open("noto/{}.otd".format(configure.GenerateFilename(dep['Numeral'])), 'rb') as numFile:
+		with open("build/noto/{}.otd".format(configure.GenerateFilename(dep['Numeral'])), 'rb') as numFile:
 			numFont = json.loads(numFile.read().decode('UTF-8', errors='replace'))
-
-			maxWidth = 490
-			numWidth = numFont['glyf']['zero']['advanceWidth']
-			changeWidth = maxWidth - numWidth if numWidth > maxWidth else 0
 
 			gsubPnum = GetGsubFlat('pnum', numFont)
 			gsubTnum = GetGsubFlat('tnum', numFont)
 			gsubOnum = GetGsubFlat('onum', numFont)
 
-			num = [ 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine' ]
+			num = [ numFont['cmap'][str(ord('0') + i)] for i in range(10) ]
 			pnum = [ gsubPnum[n] for n in num ]
 			onum = [ gsubOnum[n] for n in pnum ]
 			tonum = [ gsubOnum[n] for n in num ]
+
+			maxWidth = 490
+			numWidth = numFont['glyf'][num[0]]['advanceWidth']
+			changeWidth = maxWidth - numWidth if numWidth > maxWidth else 0
 
 			for n in num + tonum:
 				tGlyph = numFont['glyf'][n]
@@ -207,23 +239,26 @@ if __name__ == '__main__':
 
 	# merge CJK
 	if param.family in [ "Sans", "UI", "WarcraftSans", "WarcraftUI" ]:
-		with open("shs/{}.otd".format(configure.GenerateFilename(dep['CJK'])), 'rb') as asianFile:
+		with open("build/shs/{}.otd".format(configure.GenerateFilename(dep['CJK'])), 'rb') as asianFile:
 			asianFont = json.loads(asianFile.read().decode('UTF-8', errors = 'replace'))
+
 		# pre-apply `palt` in UI family
-		if param.family in [ "UI", "WarcraftUI" ]:
+		if "UI" in param.family:
 			ApplyPalt(asianFont)
+		else:
+			NowarApplyPaltMultiplied(asianFont, 0.4)
+			asianSymbolFont = GenerateAsianSymbolFont(asianFont)
+			MergeAbove(baseFont, asianSymbolFont)
+
+		NowarRemoveFeatures(asianFont)
+		Gc(asianFont)
 		MergeBelow(baseFont, asianFont)
-		# use CJK quotes, em-dash and ellipsis in non-UI family
-		if param.family not in [ "UI", "WarcraftUI" ]:
-			for u in [0x2014, 0x2018, 0x2019, 0x201C, 0x201D, 0x2026]:
-				if str(u) in asianFont['cmap']:
-					baseFont['glyf'][baseFont['cmap'][str(u)]] = asianFont['glyf'][asianFont['cmap'][str(u)]]
 
-	# avoid width trimming
-	for n, g in baseFont['glyf'].items():
-		if 'contours' in g:
-			g['contours'].append([ { 'x': 0, 'y': 0, 'on': True }, { 'x': g['advanceWidth'], 'y': 0, 'on': True } ])
+		# remap `丶` to `·` in RP variant
+		if "RP" in param.feature:
+			baseFont['cmap'][str(ord('丶'))] = baseFont['cmap'][str(ord('·'))]
+			Gc(baseFont)
 
-	outStr = json.dumps(baseFont, ensure_ascii=False)
-	with codecs.open("nowar/{}.otd".format(configure.GenerateFilename(param)), 'w', 'UTF-8') as outFile:
+	outStr = json.dumps(baseFont, ensure_ascii=False, separators=(',',':'))
+	with codecs.open("build/nowar/{}.otd".format(configure.GenerateFilename(param)), 'w', 'UTF-8') as outFile:
 		outFile.write(outStr)
