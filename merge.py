@@ -259,6 +259,11 @@ if __name__ == '__main__':
 			baseFont['cmap'][str(ord('丶'))] = baseFont['cmap'][str(ord('·'))]
 			Gc(baseFont)
 
+	# avoid width trimming
+	for _, g in baseFont['glyf'].items():
+		if 'contours' in g:
+			g['contours'].append([ { 'x': 0, 'y': 0, 'on': True }, { 'x': g['advanceWidth'], 'y': 0, 'on': True } ])
+
 	outStr = json.dumps(baseFont, ensure_ascii=False, separators=(',',':'))
 	with codecs.open("build/nowar/{}.otd".format(configure.GenerateFilename(param)), 'w', 'UTF-8') as outFile:
 		outFile.write(outStr)
