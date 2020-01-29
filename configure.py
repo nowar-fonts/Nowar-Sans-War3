@@ -333,6 +333,16 @@ def GetLatinFont(weight, region, feature):
 		encoding = "unspec"
 	)
 
+def GetLatinBoldFont(weight, region, feature):
+	return Namespace(
+		weight = weight + 200,
+		width = 5,
+		family = "Latin",
+		region = regionalVariant[region]["Latn"],
+		feature = feature,
+		encoding = "unspec"
+	)
+
 def GetHansFont(weight, region, feature):
 	return Namespace(
 		weight = weight,
@@ -417,19 +427,36 @@ if __name__ == "__main__":
 		fontlist = {
 			"FRIZQT__": GetLatinFont(w, r, fea),
 			"THOWR___": GetLatinFont(w, r, fea),
+			"BLQ55Web": GetLatinFont(w, r, fea),
+			"BLQ85Web": GetLatinBoldFont(w, r, fea),
+			"NimrodMT": GetLatinFont(w, r, fea),
 		}
 
 		if regionalVariant[r]["Hans"]:
-			fontlist.update({ "dfst-m3u": GetHansFont(w, r, fea) })
+			fontlist.update({
+				"dfst-m3u": GetHansFont(w, r, fea),
+				"arheigb_bd": GetHansFont(w, r, fea),
+			})
 
 		if regionalVariant[r]["Hant"]:
-			fontlist.update({ "dffn_b31": GetHantFont(w, r, fea) })
+			fontlist.update({
+				"dffn_b31": GetHantFont(w, r, fea),
+				"arheiu20m": GetHantFont(w, r, fea),
+				"DFHeiLt": GetHantFont(w, r, fea),
+				"arlishuu20_db": GetHantFont(w, r, fea),
+			})
 
 		if regionalVariant[r]["ja"]:
 			fontlist.update({ "tt5500m_": GetJapaneseFont(w, r, fea) })
 
 		if regionalVariant[r]["ko"]:
-			fontlist.update({ "DFHeiMd": GetKoreanFont(w, r, fea) })
+			fontlist.update({
+				"DFHeiMd": GetKoreanFont(w, r, fea),
+				"2002": GetKoreanFont(w, r, fea),
+				"2002B": GetKoreanFont(w, r, fea),
+				"bl": GetKoreanFont(w, r, fea),
+				"DFKGothicMd": GetKoreanFont(w, r, fea),
+			})
 
 		makefile["rule"][pack] = {
 			"depend": [ "out/{}/Fonts/{}.ttf".format(target, f) for f in fontlist ],
@@ -514,6 +541,36 @@ if __name__ == "__main__":
 				"depend": ["build/nowar/{}.otd".format(GenerateFilename(param))],
 				"command": [ "python set-encoding.py {}".format(ParamToArgument(enc)) ]
 			}
+
+	# Latin
+	for w, wd, fea in product(config.fontPackWeight + [ w + 200 for w in config.fontPackWeight ], [3, 5, 7], powerset(config.fontPackFeature)):
+		param = Namespace(
+			family = "Latin",
+			weight = w,
+			width = wd,
+			feature = fea,
+		)
+		makefile["rule"]["build/nowar/{}.otf".format(GenerateFilename(param))] = {
+			"depend": ["build/nowar/{}.otd".format(GenerateFilename(param))],
+			"command": [ "otfccbuild -O3 --keep-average-char-width $< -o $@ 2>/dev/null" ]
+		}
+		dep = ResolveDependency(param)
+		makefile["rule"]["build/nowar/{}.otd".format(GenerateFilename(param))] = {
+			"depend": [
+				"build/noto/{}.otd".format(GenerateFilename(dep["Latin"])),
+			],
+			"command": [ 
+				"mkdir -p build/nowar/",
+				"python merge.py {}".format(ParamToArgument(param))
+			]
+		}
+		makefile["rule"]["build/noto/{}.otd".format(GenerateFilename(dep["Latin"]))] = {
+			"depend": [ "source/noto/{}.otf".format(GenerateFilename(dep["Latin"])) ],
+			"command": [ 
+				"mkdir -p build/noto/",
+				"otfccdump --glyph-name-prefix latn --ignore-hints $< -o $@",
+			]
+		}
 
 	# dump `makefile` dict to actual “GNU Makefile”
 	makedump = ""

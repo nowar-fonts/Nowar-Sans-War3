@@ -1,6 +1,6 @@
 # Nowar Sans for _Warcraft III_
 
-This is Nowar Sans, font packs for _Warcraft III_ that support all game languages. Nowar Sans is based on [Noto Sans](https://github.com/googlei18n/noto-fonts) and [Source Han Sans](https://github.com/adobe-fonts/source-han-sans).
+This is Nowar Sans, font packs for _Warcraft III_ (both _Reforged_ and _Classic_) that support all game languages. Nowar Sans is based on [Noto Sans](https://github.com/googlei18n/noto-fonts) and [Source Han Sans](https://github.com/adobe-fonts/source-han-sans).
 
 Looking for font pack for _World of Warcraft_ or _WoW Classic_? Try [Nowar Sans for _World of Warcraft_](https://github.com/nowar-fonts/Nowar-Sans).
 
@@ -10,20 +10,13 @@ Looking for font pack for _World of Warcraft_ or _WoW Classic_? Try [Nowar Sans 
 >
 > <ruby>要<rt>Yào</rt><ruby><ruby>愛<rt>ài</rt><ruby>，<ruby>不要<rt>bùyào</rt><ruby><ruby>魔獸<rt>móshòu</rt><ruby>。
 
-## Features
-
-### Multilingual Support
-
-![Preview](images/preview.jpg)
-
-### Chat in <ruby>日本語<rt>Nihongo</rt></ruby>
-
-![Nihongo](images/nihongo.jpg)
-
 ## Installation Guide
 
 1. Choose a flavor (see below) and download it at [the download page](https://github.com/nowar-fonts/Nowar-Sans-War3/releases).
 2. Unpack `NowarSansWar3-<region>-<weight>-<version>.7z` to `Warcraft III/` (or `Warcraft III Public Test/`).
+
+### Extra Steps for _Warcraft III Classic_ (1.31 or earlier)
+
 3. Search and launch Registry Editor and navigate to `HKCU\Software\Blizzard Entertainment\Warcraft III` (or `...\Warcraft III Public Test`).
 4. Create a DWORD entry of name `Allow Local Files` and value `1`.
 
@@ -66,7 +59,7 @@ GB is a special offer that supports a superset of Chinese national standard GB 1
 | -- | ------------------- | -------------- | ------------------- | ------ |
 | GB | Mainland China (UI) | Mainland China | Mainland China (UI) | N/A    |
 
-* European: English, Español (AL), Português, Deutsch, Español (EU), Français, Italiano, and Русский.
+* European: Deutsch, English, Español (EU), Español (AL), Français, Italiano, Polski, Português, and Русский.
 * UI: Ambiguous punctations are treated as European; CJK puctations are half-width.
 
 ### Features
