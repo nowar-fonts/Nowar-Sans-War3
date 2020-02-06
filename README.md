@@ -74,17 +74,13 @@ Pre-built feature variants: `CL,OSF`, `CL,SC`, `GB,OSF`, `GB,SC`.
 
 ## Known Issue
 
-### Overlapping (or Even Wrong) CJK Texts at High Resolution
+### Overlapping (or Even Wrong) CJK Texts at High Resolution (1.32.0 or earlier)
 
 After playing for 1 minite or 2 (4k) to serveral minites (2k), or about half an hour (1080p), CJK texts does not display properly. As time goes by, it turns worse.
 
 ![Overlapping text](images/overlapping-text.jpg)
 
-This is due to a bug of _Warcraft III_ itself, not Nowar Sans. _Warcraft III_ pushes rendered glyphs to a bitmap cache to enhance performance. However, the cache is too small for thousands of CJK characters, and thus newly rendered glyphs may overlap on old ones.
-
-This issue also appears with _Warcraft III_’s vanilla fonts.
-
-![Overlapping text with vanilla fonts](images/overlapping-text-vanilla.jpg)
+**Solution**: Run [Battle.net desktop app](https://www.blizzard.com/apps/battle.net/desktop) and upgrade _Warcraft III_ to the latest version.
 
 ## How to Build
 
