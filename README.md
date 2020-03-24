@@ -24,7 +24,9 @@ Alternatively, you can download `enable-fonts.reg` from [regs/](regs/) and impor
 
 ## Choose Your Flavor
 
-[Latest release](https://github.com/nowar-fonts/Nowar-Sans-War3/releases)
+[Latest release at GitHub](https://github.com/nowar-fonts/Nowar-Sans-War3/releases)
+
+Mirrors: [Gitee (release repo)](https://gitee.com/nowar-fonts/Nowar-Sans-War3)
 
 Nowar Sans is shipped in 4 weights and 7 regional variants, with several features.
 
