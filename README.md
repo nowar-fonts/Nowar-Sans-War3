@@ -42,22 +42,22 @@ Nowar Sans is shipped in 5 weights and 4 regional variants, with several feature
 
 Bliz and Neut are “standard variants” with regional Chinese character orthographies.
 
-|      | European and        | 简体中文       | 繁體中文  | 日本語 (classic chat) | 한국어         | Note                                           |
-| ---- | ------------------- | -------------- | --------- | --------------------- | -------------- | ---------------------------------------------- |
-| Bliz | Mainland China (UI) | Mainland China | Classical | Japan (UI)            | Classical (UI) | Acts like Warcraft’s default fallback setting. |
-| Neut | Classical (UI)      | Mainland China | Taiwan    | Japan (UI)            | Classical (UI) | Prefers classical orthography on fallback.     |
+|      | European            | 简体中文       | 繁體中文  | 한국어              |
+| ---- | ------------------- | -------------- | --------- | ------------------- |
+| Bliz | Mainland China (UI) | Mainland China | Classical | Mainland China (UI) |
+| Neut | Classical (UI)      | Mainland China | Taiwan    | Classical (UI)      |
 
 CL is the “classical variant” with classical Chinese character orthography (aka Kāngxī Dictionary forms).
 
-|    | European, 日本語 (classic chat) and 한국어 | 中文      |
-| -- | ------------------------------------------ | --------- |
-| CL | Classical (UI)                             | Classical |
+|    | European and 한국어 | 中文      |
+| -- | ------------------- | --------- |
+| CL | Classical (UI)      | Classical |
 
 PSimp and PSimpChat are special variants for 繁體中文 that remap traditional Chinese character to simplified ones.
 
-|       | 繁體中文                  | European, 简体中文, 日本語 (classic chat) and 한국어 |
-| ----- | ------------------------- | ---------------------------------------------------- |
-| PSimp | Mainland China (Remapped) | N/A                                                  |
+|       | 繁體中文                  | European, 简体中文 and 한국어 |
+| ----- | ------------------------- | ----------------------------- |
+| PSimp | Mainland China (Remapped) | N/A                           |
 
 * European: English, Español (AL), Português, Deutsch, Español (EU), Français, Italiano, and Русский.
 * UI: Ambiguous punctations are treated as Western; CJK puctations are half-width.

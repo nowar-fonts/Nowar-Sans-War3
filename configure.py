@@ -36,7 +36,7 @@ config = Config()
 # enUS - fonts for languages in Latin and Cyrillic script; can be false
 # zhCN - fonts for 简体中文; can be false
 # zhTW - fonts for 繁體中文; can be false
-# jaJP - fonts for 日本語; can be false
+# jaJP - fonts for 日本語 (classic chat); can be false
 # koKR - fonts for 한국어; can be false
 #
 # xmod - a list of tuples of feature mod and related parameter list
@@ -48,21 +48,21 @@ regionalVariant = {
         "enUS": "CL",
         "zhCN": "CN",
         "zhTW": "TW",
-        "jaJP": "JP",
+        "jaJP": None,
         "koKR": "CL",
     },
     "Bliz": {
         "enUS": "CN",
         "zhCN": "CN",
         "zhTW": "CL",
-        "jaJP": "JP",
-        "koKR": "CL",
+        "jaJP": None,
+        "koKR": "CN",
     },
     "CL": {
         "enUS": "CL",
         "zhCN": "CL",
         "zhTW": "CL",
-        "jaJP": "CL",
+        "jaJP": None,
         "koKR": "CL",
     },
     "PSimp": {
@@ -573,7 +573,9 @@ if __name__ == "__main__":
             })
 
         if regionalVariant[r]["jaJP"]:
-            fontlist.update({"tt5500m_": GetJapaneseFont(w, r, fea)})  # C chat
+            fontlist.update({
+                "tt5500m_": GetJapaneseFont(w, r, fea),  # C chat
+            })
 
         if regionalVariant[r]["koKR"]:
             fontlist.update({
