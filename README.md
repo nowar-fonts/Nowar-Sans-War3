@@ -13,7 +13,10 @@ Looking for font pack for _World of Warcraft_ or _WoW Classic_? Try [Nowar Sans 
 ## Installation Guide
 
 1. Choose a flavor (see below) and download it at [the download page](https://github.com/nowar-fonts/Nowar-Sans-War3/releases).
-2. Unpack `NowarSansWar3-<region>-<weight>-<version>.7z` to `Warcraft III/` (or `Warcraft III Public Test/`).
+2. Unpack `NowarSansWar3-<region>-<weight>-<version>.7z` to
+   - `Warcraft III/` (Reforged Retail, Classic Retail) or,
+   - `Warcraft III/_ptr_/` (Reforged PTR) or,
+   - `Warcraft III Public Test/` (Classic PTR).
 
 ### Extra Steps for _Warcraft III Classic_ (1.31 or earlier)
 
