@@ -19,12 +19,19 @@ Looking for font pack for _World of Warcraft_ or _WoW Classic_? Try [Nowar Sans 
    - `Warcraft III/` (Classic Retail) or,
    - `Warcraft III Public Test/` (Classic PTR).
 
-### Extra Steps for _Warcraft III Classic_ (1.31 or earlier)
+(Windows or Wine)
 
 3. Search and launch Registry Editor and navigate to `HKCU\Software\Blizzard Entertainment\Warcraft III` (or `...\Warcraft III Public Test`).
 4. Create a DWORD entry of name `Allow Local Files` and value `1`.
 
 Alternatively, you can download `enable-fonts.reg` from [regs/](regs/) and import it to the registry.
+
+(macOS)
+
+3. Launch Terminal and run
+   ```
+   defaults write "com.blizzard.Warcraft III" "Allow Local Files" -int 1
+   ```
 
 ## Choose Your Flavor
 
